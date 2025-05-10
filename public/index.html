@@ -10,10 +10,16 @@
 </head>
 
 <body>
+    <header>
+        <h1 id="Titulo">Morteus</h1>
+
+        <p>Desarrollado por <a id="perfilGit" href="https://github.com/Cesar-mendozaa">César Mendoza</a>
+        </header>
+    </header>
     <div id="game-container">
         <canvas id="game-canvas"></canvas>
         <div id="ui-containter">
-            <div id="message-log">Bienvenido a Morteus!</div>
+            <div id="message-log">¡Bienvenido a Morteus!</div>
             <div id="player-stats">
                 <span id="player-name">Jugador</span>
                 HP: <span id="player-hp">100</span> / <span id="player-max-hp">100</span>
@@ -29,10 +35,10 @@
                 </div>
             </div>
             <div id="action-menu">
-                <button id="attack-button">Atacar</button>
-                <button id="defend-button">Defender</button>
-                <button id="item-button">Usar objeto</button>
-                <button id="run-button">Huir</button>
+                <button data-action="attack"=""="attack-button">Atacar</button>
+                <button data-action="defend" id="defend-button">Defender</button>
+                <button data-action="item" id="item-button">Usar objeto</button>
+                <button data-action="run" id="run-button">Huir</button>
                 <!-- Agregar mas acciones de ser necesario :D -->
             </div>
         </div>

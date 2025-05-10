@@ -53,27 +53,32 @@ document.addEventListener('DOMContentLoaded', () => {
             name: "Héroe",
             hp: 100,
             maxHp: 100,
-            attack: 15,
-            defense: 5,
+            attack: 30,
+            defense: 8,
             isDefending: false,
             sprite: assets.playerSprite,
-            x: 50, y: GBA_HEIGHT - 50 - 32, // Posición del sprite (ajusta al tamaño de tu UI inferior)
-            width: 32, height: 32 // Tamaño del sprite
+            x: 50, 
+            y: GBA_HEIGHT - 5 - 32, // Posición del sprite (ajusta al tamaño de tu UI inferior)
+            width: 32, 
+            height: 32 // Tamaño del sprite
         },
         enemy: {
-            name: "Goblin",
+            name: "David",
             hp: 80,
             maxHp: 80,
-            attack: 12,
-            defense: 3,
+            attack: 30,
+            defense: 10,
             isDefending: false,
             sprite: assets.enemySprite,
-            x: GBA_WIDTH - 50 - 32, y: GBA_HEIGHT - 50 - 32 - 20, // Un poco más arriba
-            width: 32, height: 32
+            x: GBA_WIDTH - 50 - 32, 
+            y: GBA_HEIGHT - 10 - 32 - 20, // Un poco más arriba
+            width: 32, 
+            height: 32
         },
         currentTurn: 'player', // 'player' o 'ai'
         gameOver: false,
-        message: "¡Comienza la batalla!"
+        message: "¡Comienza la batalla!",
+        potionsUsed: 0 // Contador de pociones usadas
     };
 
     // --- GAME LOGIC FUNCTIONS ---
@@ -85,7 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (gameState.player.hp / gameState.player.maxHp < 0.6) playerHpBar.style.backgroundColor = 'orange';
         else playerHpBar.style.backgroundColor = 'green';
 
-
         enemyHpDisplay.textContent = gameState.enemy.hp;
         enemyMaxHpDisplay.textContent = gameState.enemy.maxHp;
         enemyHpBar.style.width = `${(gameState.enemy.hp / gameState.enemy.maxHp) * 100}%`;
@@ -93,17 +97,20 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (gameState.enemy.hp / gameState.enemy.maxHp < 0.6) enemyHpBar.style.backgroundColor = 'orange';
         else enemyHpBar.style.backgroundColor = 'green';
 
-        logMessage(gameState.message); // Actualiza el mensaje principal
         toggleActionMenu(gameState.currentTurn === 'player' && !gameState.gameOver);
     }
 
     function logMessage(text) {
+        console.log(`logMessage llamada con: "${text}"`);
         gameState.message = text; // Guardar el último mensaje
-        // Para el messageLog, podríamos querer añadir mensajes en lugar de reemplazar
+
         const newMessage = document.createElement('p');
         newMessage.textContent = text;
         messageLog.appendChild(newMessage);
         messageLog.scrollTop = messageLog.scrollHeight; // Auto-scroll
+        
+        // Llama a la función para animar el texto
+        typeText(newMessage, text, 50); // Ajusta la velocidad con el tercer parámetro
     }
 
     function toggleActionMenu(show) {
@@ -114,26 +121,43 @@ document.addEventListener('DOMContentLoaded', () => {
         attacker.isDefending = false; // Si ataca, no está defendiendo
         let damage = attacker.attack - (defender.isDefending ? defender.defense * 2 : defender.defense);
         damage = Math.max(1, damage); // Asegurar al menos 1 de daño
+
+        console.log(`${attacker.name} ataca a ${defender.name}`);
+        console.log(`  ${attacker.name} attack: ${attacker.attack}`);
+        console.log(`  ${defender.name} defense: ${defender.defense}`);
+        console.log(`  Damage before Math.max: ${damage}`);
+
+        damage = Math.max(1, damage); // Asegurar al menos 1 de daño
+
+        console.log(`  Damage after Math.max: ${damage}`);
+        console.log(`  ${defender.name} HP before attack: ${defender.hp}`);
+
         defender.hp = Math.max(0, defender.hp - damage);
 
-        logMessage(`${attacker.name} ataca a ${defender.name} y causa ${damage} de daño.`);
-        // Aquí podrías añadir una pequeña animación de "hit"
+        console.log(`  ${defender.name} HP after attack: ${defender.hp}`);
+
+        logMessage(`${attacker.name} ataca a ${defender.name} y causa ${damage} de daño.`);        // Aquí podrías añadir una pequeña animación de "hit"
         // simpleHitAnimation(defender);
         checkGameOver();
     }
 
     function defend(character) {
         character.isDefending = true;
-        logMessage(`${character.name} se prepara para defender.`);
+        logMessage(`${character.name} se prepara para defender.`);    
     }
 
     function useItem(character) {
-        // Lógica simple: poción de vida
-        const healAmount = 20;
-        character.hp = Math.min(character.maxHp, character.hp + healAmount);
-        logMessage(`${character.name} usa una poción y recupera ${healAmount} HP.`);
-        // Aquí podrías añadir un efecto visual de curación
+    if (gameState.potionsUsed >= 2) {
+        logMessage(`${character.name} ya no puede usar más pociones.`);
+        return; // Salir de la función si ya usó 2 pociones
     }
+
+    // Lógica para usar una poción
+    const healAmount = 20;
+    character.hp = Math.min(character.maxHp, character.hp + healAmount);
+    gameState.potionsUsed++; // Incrementar el contador de pociones usadas
+    logMessage(`${character.name} usa una poción y recupera ${healAmount} HP.`);
+}
 
     function checkGameOver() {
         if (gameState.player.hp <= 0) {
@@ -158,40 +182,56 @@ document.addEventListener('DOMContentLoaded', () => {
         if (gameState.currentTurn === 'ai' && !gameState.enemy.isDefendingThisTurn) {
             gameState.enemy.isDefending = false;
         }
-        gameState.player.isDefendingThisTurn = false; // Resetear para el proximo turno
+        gameState.player.isDefendingThisTurn = false; // Resetear para el próximo turno
         gameState.enemy.isDefendingThisTurn = false;
 
-
+        // Cambiar turno
         gameState.currentTurn = (gameState.currentTurn === 'player') ? 'ai' : 'player';
-        logMessage(`Turno de ${gameState.currentTurn === 'player' ? gameState.player.name : gameState.enemy.name}.`);
+        console.log(`Turno actual: ${gameState.currentTurn}`);
 
+        // Solo muestra el mensaje de turno si no es el turno del jugador
         if (gameState.currentTurn === 'ai') {
+            logMessage(`Turno de ${gameState.enemy.name}.`);
             setTimeout(aiTurn, 1000); // Dar un pequeño delay para la IA
+        } else {
+            logMessage(`Turno de ${gameState.player.name}.`);
         }
         updateUI();
     }
 
     function aiTurn() {
-        if (gameState.gameOver) return;
+        if (gameState.gameOver || gameState.currentTurn !== 'ai') return; // Asegurarse de que sea el turno de la IA
+
         gameState.enemy.isDefending = false; // IA deja de defender al inicio de su turno
 
-        // IA Estrategia Básica:
-        const randomAction = Math.random();
-        if (gameState.enemy.hp < gameState.enemy.maxHp * 0.3 && randomAction < 0.4) { // 40% chance de curar si está bajo de vida
-            // Simular uso de item (si tienes un sistema de items para la IA)
-            // Por ahora, vamos a hacer que defienda más si está bajo de vida
-            defend(gameState.enemy);
-            gameState.enemy.isDefendingThisTurn = true;
+        // IA Estrategia Avanzada:
+        const playerHpPercentage = gameState.player.hp / gameState.player.maxHp;
+        const enemyHpPercentage = gameState.enemy.hp / gameState.enemy.maxHp;
 
-        } else if (randomAction < 0.25 && gameState.enemy.hp < gameState.enemy.maxHp * 0.7) { // 25% chance de defender
+        // Decidir acción basada en la situación
+        if (enemyHpPercentage < 0.3 && gameState.potionsUsed < 2) {
+            // Si la IA está en peligro y puede usar pociones, prioriza curarse
+            useItem(gameState.enemy);
+        } else if (playerHpPercentage < 0.3 && Math.random() < 0.6) {
+            // Si el jugador está débil, hay un 60% de probabilidad de atacar agresivamente
+            attack(gameState.enemy, gameState.player);
+        } else if (enemyHpPercentage < 0.5 && Math.random() < 0.5) {
+            // Si la IA está por debajo del 50% de vida, hay un 50% de probabilidad de defender
             defend(gameState.enemy);
             gameState.enemy.isDefendingThisTurn = true;
-        } else { // Atacar
+        } else if (Math.random() < 0.7) {
+            // En la mayoría de los casos, la IA atacará
             attack(gameState.enemy, gameState.player);
+        } else {
+            // En otros casos, la IA se defiende
+            defend(gameState.enemy);
+            gameState.enemy.isDefendingThisTurn = true;
         }
+
         updateUI(); // Actualizar UI después de la acción de la IA
+
         if (!gameState.gameOver) {
-            nextTurn(); // Pasar al turno del jugador
+            setTimeout(nextTurn, 3000);
         }
     }
 
@@ -209,11 +249,12 @@ document.addEventListener('DOMContentLoaded', () => {
             gameState.player.isDefendingThisTurn = true;
         } else if (action === 'item') {
             useItem(gameState.player);
-            // Usar un item generalmente consume el turno
         }
         updateUI(); // Actualizar UI después de la acción del jugador
+
+        // Cambiar turno solo después de que el jugador haya realizado su acción
         if (!gameState.gameOver) {
-            nextTurn(); // Pasar al turno de la IA
+            setTimeout(nextTurn, 3000);
         }
     });
 
@@ -241,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Para GBA, la UI suele estar en una ventana separada abajo.
             // Aquí asumimos que el fondo cubre donde están los sprites
             // Si tu UI está DENTRO del canvas, ajusta las Y de los personajes
-            ctx.drawImage(assets.background, 0, 0, canvas.width, GBA_HEIGHT - 50); // Asumiendo que la UI tiene 50px de alto
+            ctx.drawImage(assets.background, 0, 0, canvas.width, GBA_HEIGHT - 0); // Asumiendo que la UI tiene 50px de alto
         } else {
             ctx.fillStyle = '#332255'; // Un color de fondo placeholder
             ctx.fillRect(0, 0, canvas.width, GBA_HEIGHT - 50);
@@ -259,8 +300,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- INITIALIZATION ---
     function initGame() {
+        // Solicitar el nombre del jugador
+        const playerName = prompt("Por favor, ingresa tu nombre:", "");
+        gameState.player.name = playerName || "Héroe"; // Si no ingresa nada, usar "Héroe" como predeterminado
+
         document.getElementById('player-name').textContent = gameState.player.name;
         document.getElementById('enemy-name').textContent = gameState.enemy.name;
+        
         updateUI();
         render(); // Iniciar el bucle de renderizado
     }
@@ -268,3 +314,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // No llames a initGame() aquí directamente, espera a que los assets carguen.
     // assetLoaded() llamará a initGame().
 });
+
+function typeText(element, text, speed = 50) {
+    element.textContent = ""; // Limpia el contenido previo
+    let index = 0;
+
+    function type() {
+        if (index < text.length) {
+            element.textContent += text[index];
+            index++;
+            setTimeout(type, speed); // Controla la velocidad de escritura
+        }
+    }
+
+    type();
+}

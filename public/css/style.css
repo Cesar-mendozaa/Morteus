@@ -12,6 +12,40 @@ body {
     /* Evitar scrollbars innecesarios */
 }
 
+#perfilGit {
+    color: #c72220;
+}
+
+#Titulo {
+    color: #c72220;
+    font-size: 20px;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    font-family: 'Press Start 2P', cursive;
+    /* Cambia la fuente a una de estilo retro */
+    text-shadow: 2px 2px 0 #000, 4px 4px 0 #000, 6px 6px 0 #000;
+    /* Sombra para dar un efecto de profundidad */
+    text-transform: uppercase;
+    /* Para un toque retro */
+    letter-spacing: 2px;
+    /* Espaciado entre letras */
+    
+}
+
+header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #333;
+    color: #ccc;
+    text-align: center;
+    padding: 5px 0;
+    font-size: 8px;
+    z-index: 10;
+}
+
 #game-container {
     border: 2px solid #fff;
     position: relative;
@@ -22,6 +56,7 @@ body {
     height: 320px;
     /* 160 * 2 */
     /* Si quieres escalar el canvas manteniendo el pixel art, es mejor hacerlo con JS o CSS transform */
+    transform: translateY(-50%);
 }
 
 #game-canvas {
@@ -64,7 +99,8 @@ body {
     grid-area: message;
     background-color: #000;
     padding: 5px;
-    height: 30px;
+    max-height: 200px;
+    height: 150px;
     /* Ajustar según necesidad */
     border: 1px solid #ccc;
     overflow-y: auto;
@@ -92,6 +128,7 @@ body {
     margin-top: 2px;
 }
 
+
 .health-bar {
     height: 100%;
     background-color: green;
@@ -113,9 +150,10 @@ body {
     background-color: #444;
     color: #fff;
     border: 1px solid #888;
-    padding: 5px 8px;
+    padding: 15px 12px;
     cursor: pointer;
-    font-size: 8px;
+    font-size: 9px;
+    transform: translateY(40%);
 }
 
 #action-menu button:hover {
@@ -127,6 +165,6 @@ body {
 }
 
 /* Esconder canvas temporalmente si el UI es sobrepuesto y no queremos interacción */
-#game-canvas {
+/* #game-canvas {
     z-index: -1;
-}
+} */
