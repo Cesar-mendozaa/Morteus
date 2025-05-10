@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Combate por Turnos Retro</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="game-container">
+        <canvas id="game-canvas"></canvas>
+        <div id="ui-containter">
+            <div id="message-log">Bienvenido a Morteus!</div>
+            <div id="player-stats">
+                <span id="player-name">Jugador</span>
+                HP: <span id="player-hp">100</span> / <span id="player-max-hp">100</span>
+                <div class="health-bar-container">
+                    <div id="player-hp-bar" class="health-bar"></div>
+                </div>
+            </div>
+            <div id="enemy-stats">
+                <span id="enemy-name">Enemigo</span>
+                HP: <span id="enemy-hp">80</span> / <span id="enemy-max-hp">80</span>
+                <div class="health-bar-container">
+                    <div id="enemy-hp-bar" class="health-bar"></div>
+                </div>
+            </div>
+            <div id="action-menu">
+                <button id="attack-button">Atacar</button>
+                <button id="defend-button">Defender</button>
+                <button id="item-button">Usar objeto</button>
+                <button id="run-button">Huir</button>
+                <!-- Agregar mas acciones de ser necesario :D -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/game.js"></script>
+</body>
+
+</html>

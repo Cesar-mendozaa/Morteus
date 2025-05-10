@@ -1,0 +1,132 @@
+body {
+    font-family: 'Press Start 2P', cursive;
+    /* Necesitarás importar esta fuente o una similar */
+    background-color: #333;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    overflow: hidden;
+    /* Evitar scrollbars innecesarios */
+}
+
+#game-container {
+    border: 2px solid #fff;
+    position: relative;
+    /* Para posicionar elementos UI sobre el canvas si es necesario */
+    /* Dimensiones GBA aproximadas (240x160) escaladas */
+    width: 480px;
+    /* 240 * 2 */
+    height: 320px;
+    /* 160 * 2 */
+    /* Si quieres escalar el canvas manteniendo el pixel art, es mejor hacerlo con JS o CSS transform */
+}
+
+#game-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: auto;
+    image-rendering: pixelated;
+    /* CRUCIAL para pixel art */
+    image-rendering: -moz-crisp-edges;
+    /* Firefox */
+    image-rendering: crisp-edges;
+    /* Otros navegadores */
+    background-color: #000;
+    /* Fondo del canvas si la imagen no lo cubre todo */
+}
+
+#ui-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 50, 0.8);
+    /* Azul oscuro semi-transparente */
+    border-top: 2px solid #fff;
+    padding: 5px;
+    box-sizing: border-box;
+    font-size: 8px;
+    /* Tamaño base pequeño para UI retro */
+    display: grid;
+    grid-template-areas:
+        "message message"
+        "player-stats enemy-stats"
+        "action-menu action-menu";
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+}
+
+#message-log {
+    grid-area: message;
+    background-color: #000;
+    padding: 5px;
+    height: 30px;
+    /* Ajustar según necesidad */
+    border: 1px solid #ccc;
+    overflow-y: auto;
+}
+
+#player-stats,
+#enemy-stats {
+    padding: 5px;
+    border: 1px solid #ccc;
+}
+
+#player-stats {
+    grid-area: player-stats;
+}
+
+#enemy-stats {
+    grid-area: enemy-stats;
+}
+
+.health-bar-container {
+    width: 100%;
+    height: 8px;
+    background-color: #555;
+    border: 1px solid #222;
+    margin-top: 2px;
+}
+
+.health-bar {
+    height: 100%;
+    background-color: green;
+    width: 100%;
+    /* Se actualizará con JS */
+    transition: width 0.3s ease-out;
+}
+
+#action-menu {
+    grid-area: action-menu;
+    display: flex;
+    justify-content: space-around;
+    padding-top: 5px;
+}
+
+#action-menu button {
+    font-family: inherit;
+    /* Usa la fuente pixelada */
+    background-color: #444;
+    color: #fff;
+    border: 1px solid #888;
+    padding: 5px 8px;
+    cursor: pointer;
+    font-size: 8px;
+}
+
+#action-menu button:hover {
+    background-color: #666;
+}
+
+#action-menu button:active {
+    background-color: #222;
+}
+
+/* Esconder canvas temporalmente si el UI es sobrepuesto y no queremos interacción */
+#game-canvas {
+    z-index: -1;
+}
